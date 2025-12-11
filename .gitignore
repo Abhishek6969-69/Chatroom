@@ -1,0 +1,58 @@
+# Global ignores for monorepo
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+package-lock.json
+.pnpm-store/
+
+# Dist / Build
+dist/
+build/
+.cache/
+coverage/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.*
+!*.example
+
+# Prisma
+prisma/generated/
+.prisma/
+*.db
+
+# Docker volumes / runtime
+pgdata/
+redisdata/
+docker-data/
+*.pid
+*.log
+*.out
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+
+# Specific apps dist/node_modules protection
+apps/api-server/dist/
+apps/api-server/node_modules/
+
+apps/ws-server/dist/
+apps/ws-server/node_modules/
+
+apps/worker/dist/
+apps/worker/node_modules/

@@ -1,0 +1,18 @@
+# Node
+node_modules/
+npm-debug.log*
+
+# Build
+dist/
+*.tsbuildinfo
+
+# Env
+.env
+.env.*
+
+# Prisma artifacts
+prisma/generated/
+.prisma/
+
+# IDE
+.vscode/
