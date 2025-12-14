@@ -1,0 +1,52 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: chat
+      POSTGRES_USER: chatuser
+      POSTGRES_PASSWORD: npg_w1gArQDbNJ4U
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  redis:
+    image: redis:7
+    command: ["redis-server", "--save", "900", "1"]
+    ports:
+      - "6379:6379"
+
+  api:
+    build:
+      context: ./apps/api-server
+      dockerfile: Dockerfile
+    env_file: .env
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "4000:4000"
+
+  ws-server:
+    build:
+      context: ./apps/ws-server
+      dockerfile: Dockerfile
+    env_file: .env
+    depends_on:
+      - redis
+      - api
+    ports:
+      - "8080:8080"
+
+  worker:
+    build:
+      context: ./apps/worker
+      dockerfile: Dockerfile
+    env_file: .env
+    depends_on:
+      - redis
+      - postgres
+
+volumes:
+  pgdata:
