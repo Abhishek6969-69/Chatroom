@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { ZodError } from 'zod';
 import { Prisma } from '../src/generated/prisma/client.js';
-import {prisma} from '../prisma/client.js'
+import {prisma} from '../../../prisma/client.js'
 import {signupSchema} from '../validators/auth.schema.js'
 import {loginSchema} from '../validators/auth.schema.js';
 import {authmiddleware} from '../middleware/middleware.js';

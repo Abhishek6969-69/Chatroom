@@ -5,40 +5,42 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
+  output   = "./generated/client"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-model User{
-  id    String   @id @default(cuid())
-  username String  @unique
+model User {
+  id             String       @id @default(cuid())
+  username       String       @unique
   hashedPassword String
-  createdAt DateTime @default(now())
-  memberships Membership[]
-  messages Message[]
+  createdAt      DateTime     @default(now())
+  memberships    Membership[]
+  messages       Message[]
 }
-model Room{
-  id    String   @id @default(cuid())
-  name  String   @unique
+
+model Room {
+  id        String   @id @default(cuid())
+  name      String   @unique
   createdBy String
   createdAt DateTime @default(now())
-  
-  messages Message[]
+
+  messages    Message[]
   memberships Membership[]
 }
+
 model Membership {
-  id      String @id @default(uuid())
-  roomId  String
-  userId  String
+  id     String @id @default(uuid())
+  roomId String
+  userId String
 
   user User @relation(fields: [userId], references: [id])
   room Room @relation(fields: [roomId], references: [id])
 
-  @@unique([roomId, userId]) 
+  @@unique([roomId, userId])
 }
 
 model Message {

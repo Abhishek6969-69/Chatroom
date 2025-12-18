@@ -1,0 +1,15 @@
+{
+  "name": "chat-room",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/api-server",
+    "apps/ws-server",
+    "apps/worker",
+    "apps/prisma"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "dev": "npm run dev --workspaces"
+  }
+}
