@@ -22,5 +22,8 @@ RUN cd apps/prisma && npx prisma generate
 # Build
 RUN cd apps/ws-server && npm run build
 
+# Copy generated client to dist so compiled code can find it
+RUN mkdir -p apps/ws-server/dist/prisma && cp -r apps/prisma/generated apps/ws-server/dist/prisma/
+
 EXPOSE 8080
-CMD ["node", "apps/ws-server/dist/ws-server/src/index.js"]
+CMD ["node", "apps/ws-server/dist/index.js"]

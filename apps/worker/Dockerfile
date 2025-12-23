@@ -22,5 +22,8 @@ RUN cd apps/prisma && npx prisma generate
 # Build
 RUN cd apps/worker && npm run build
 
+# Copy generated client to dist so compiled code can find it
+RUN mkdir -p apps/worker/dist/prisma && cp -r apps/prisma/generated apps/worker/dist/prisma/
+
 # Run with explicit error output
 CMD ["node", "--no-warnings=ExperimentalWarning", "apps/worker/dist/worker/src/index.js"]

@@ -2,11 +2,10 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { ZodError } from 'zod';
-import { Prisma } from '../src/generated/prisma/client.js';
+import type { Prisma } from '@prisma/client';
 import {prisma} from '../../../prisma/client.js'
 import {signupSchema} from '../validators/auth.schema.js'
 import {loginSchema} from '../validators/auth.schema.js';
-import {authmiddleware} from '../middleware/middleware.js';
 const authrouter=express.Router();
 
 authrouter.post('/signup',async(req,res)=>{
@@ -35,19 +34,19 @@ authrouter.post('/signup',async(req,res)=>{
     })
     }
     catch(err: unknown){
+        console.error('Signup failed', err);
         if (err instanceof ZodError) {
             return res.status(400).json({ error: err.issues });
         }
         if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
             return res.status(409).json({ error: 'Username already exists' });
         }
-        console.error('Signup failed', err);
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: 'Internal server error', detail: err instanceof Error ? err.message : String(err) });
     }
    
 })
 
-authrouter.post('/login',authmiddleware,async(req,res)=>{
+authrouter.post('/login',async(req,res)=>{
 
 try{
    const result=loginSchema.parse(req.body); 
