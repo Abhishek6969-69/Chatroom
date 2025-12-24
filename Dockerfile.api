@@ -13,6 +13,9 @@ COPY apps/worker/package*.json ./apps/worker/
 # Install all workspace dependencies from the root
 RUN npm install --workspaces
 
+# Ensure prisma package dependencies are present in its workspace (belt-and-suspenders)
+RUN cd apps/prisma && npm install
+
 # Copy source code
 COPY apps/api-server ./apps/api-server
 COPY apps/prisma ./apps/prisma
