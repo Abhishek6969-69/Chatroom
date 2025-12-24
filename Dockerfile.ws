@@ -4,13 +4,14 @@ WORKDIR /usr/src/app
 # Copy root dependencies
 COPY package*.json ./
 
-# Copy all package.json files
-COPY apps/ws-server/package*.json ./apps/ws-server/
+# Copy all package.json files (needed for workspaces install)
+COPY apps/api-server/package*.json ./apps/api-server/
 COPY apps/prisma/package*.json ./apps/prisma/
+COPY apps/ws-server/package*.json ./apps/ws-server/
+COPY apps/worker/package*.json ./apps/worker/
 
-# Install dependencies
-RUN cd apps/ws-server && npm install
-RUN cd apps/prisma && npm install
+# Install all workspace dependencies from the root
+RUN npm install --workspaces
 
 # Copy source code
 COPY apps/ws-server ./apps/ws-server
