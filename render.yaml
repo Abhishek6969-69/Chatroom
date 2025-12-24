@@ -1,0 +1,105 @@
+services:
+  # PostgreSQL Database
+  - type: pserv
+    name: chatroom-db
+    env: docker
+    plan: free
+    region: oregon
+    databases:
+      - name: chatroom
+        user: chatuser
+    
+  # Redis Cache
+  - type: redis
+    name: chatroom-redis
+    plan: free
+    region: oregon
+    maxmemoryPolicy: allkeys-lru
+
+  # API Server
+  - type: web
+    name: chatroom-api
+    env: docker
+    region: oregon
+    plan: free
+    dockerfilePath: ./apps/api-server/Dockerfile
+    dockerContext: ./
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: chatroom-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: chatroom-redis
+          type: redis
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PORT_API
+        value: 4000
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: /health
+
+  # WebSocket Server
+  - type: web
+    name: chatroom-ws
+    env: docker
+    region: oregon
+    plan: free
+    dockerfilePath: ./apps/ws-server/Dockerfile
+    dockerContext: ./
+    envVars:
+      - key: REDIS_URL
+        fromService:
+          name: chatroom-redis
+          type: redis
+          property: connectionString
+      - key: JWT_SECRET
+        sync: false
+      - key: PORT_WS
+        value: 8080
+      - key: NODE_ENV
+        value: production
+
+  # Background Worker
+  - type: worker
+    name: chatroom-worker
+    env: docker
+    region: oregon
+    plan: free
+    dockerfilePath: ./apps/worker/Dockerfile
+    dockerContext: ./
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: chatroom-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: chatroom-redis
+          type: redis
+          property: connectionString
+      - key: NODE_ENV
+        value: production
+
+  # Frontend
+  - type: web
+    name: chatroom-frontend
+    env: docker
+    region: oregon
+    plan: free
+    dockerfilePath: ./apps/frontend/Dockerfile
+    dockerContext: ./
+    buildCommand: |
+      docker build \
+        --build-arg VITE_API_URL=$VITE_API_URL \
+        --build-arg VITE_WS_URL=$VITE_WS_URL \
+        -f ./apps/frontend/Dockerfile \
+        .
+    envVars:
+      - key: VITE_API_URL
+        value: https://chatroom-api.onrender.com
+      - key: VITE_WS_URL
+        value: wss://chatroom-ws.onrender.com

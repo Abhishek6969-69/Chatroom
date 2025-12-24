@@ -5,9 +5,11 @@ dist
 *.log
 .DS_Store
 .vscode
-*.md
 docker-compose.yml
-.dockerignore
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Keep these files for deployment
+!README.md
+!DOCKER_DEPLOY.md
