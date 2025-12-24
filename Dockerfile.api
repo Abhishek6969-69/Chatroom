@@ -1,27 +1,17 @@
 FROM node:20-alpine
 WORKDIR /usr/src/app
 
-# Copy root dependencies
-COPY package*.json ./
-
-# Copy all package.json files (needed for workspaces install)
-COPY apps/api-server/package*.json ./apps/api-server/
+# Install Prisma package deps
 COPY apps/prisma/package*.json ./apps/prisma/
-COPY apps/ws-server/package*.json ./apps/ws-server/
-COPY apps/worker/package*.json ./apps/worker/
-
-# Install all workspace dependencies from the root
-RUN npm install --workspaces
-
-# Ensure prisma package dependencies are present in its workspace (belt-and-suspenders)
 RUN cd apps/prisma && npm install
 
-# Copy source code
-COPY apps/api-server ./apps/api-server
-COPY apps/prisma ./apps/prisma
+# Install API deps
+COPY apps/api-server/package*.json ./apps/api-server/
+RUN cd apps/api-server && npm install
 
-# After copying sources, ensure prisma workspace deps are installed (guards against overwritten node_modules)
-RUN npm install @prisma/client prisma --workspace apps/prisma
+# Copy source code
+COPY apps/prisma ./apps/prisma
+COPY apps/api-server ./apps/api-server
 
 # Generate Prisma client (with dummy DATABASE_URL for build time)
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy?schema=public"
