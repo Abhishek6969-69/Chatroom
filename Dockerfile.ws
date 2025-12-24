@@ -16,7 +16,8 @@ RUN cd apps/prisma && npm install
 COPY apps/ws-server ./apps/ws-server
 COPY apps/prisma ./apps/prisma
 
-# Generate Prisma client
+# Generate Prisma client (with dummy DATABASE_URL for build time)
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy?schema=public"
 RUN cd apps/prisma && npx prisma generate
 
 # Build
