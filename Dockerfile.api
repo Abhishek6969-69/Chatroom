@@ -1,0 +1,29 @@
+FROM node:20-alpine
+WORKDIR /usr/src/app
+
+# Copy root dependencies
+COPY package*.json ./
+
+# Copy all package.json files
+COPY apps/api-server/package*.json ./apps/api-server/
+COPY apps/prisma/package*.json ./apps/prisma/
+
+# Install dependencies
+RUN cd apps/api-server && npm install
+RUN cd apps/prisma && npm install
+
+# Copy source code
+COPY apps/api-server ./apps/api-server
+COPY apps/prisma ./apps/prisma
+
+# Generate Prisma client
+RUN cd apps/prisma && npx prisma generate
+
+# Build
+RUN cd apps/api-server && npm run build
+
+# Copy generated client to dist so compiled code can find it
+RUN mkdir -p apps/api-server/dist/prisma && cp -r apps/prisma/generated apps/api-server/dist/prisma/
+
+EXPOSE 4000
+CMD ["sh", "-c", "cd apps/prisma && npx prisma db push --accept-data-loss && cd ../api-server && node dist/api-server/src/index.js"]

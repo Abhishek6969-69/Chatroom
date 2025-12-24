@@ -1,0 +1,28 @@
+FROM node:20-alpine
+WORKDIR /usr/src/app
+
+# Copy package files
+COPY apps/frontend/package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy source
+COPY apps/frontend ./
+
+# Build arguments for API URLs
+ARG VITE_API_URL=http://localhost:4000
+ARG VITE_WS_URL=ws://localhost:8080
+
+# Set as environment variables
+ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_WS_URL=$VITE_WS_URL
+
+# Build the app
+RUN npm run build
+
+# Install serve to run the built app
+RUN npm install -g serve
+
+EXPOSE 3000
+CMD ["serve", "-s", "dist", "-l", "3000"]

@@ -61,8 +61,7 @@ The `render.yaml` file in the root directory contains the complete infrastructur
    - **Branch**: main
    - **Root Directory**: Leave empty (use repository root)
    - **Environment**: Docker
-   - **Dockerfile Path**: `./apps/api-server/Dockerfile`
-   - **Docker Build Context Directory**: `./`
+   - **Dockerfile Path**: `./Dockerfile.api`
    - **Plan**: Free
 
 4. Add Environment Variables:
@@ -86,8 +85,7 @@ The `render.yaml` file in the root directory contains the complete infrastructur
    - **Branch**: main
    - **Root Directory**: Leave empty
    - **Environment**: Docker
-   - **Dockerfile Path**: `./apps/ws-server/Dockerfile`
-   - **Docker Build Context Directory**: `./`
+   - **Dockerfile Path**: `./Dockerfile.ws`
    - **Plan**: Free
 
 4. Add Environment Variables:
@@ -110,8 +108,7 @@ The `render.yaml` file in the root directory contains the complete infrastructur
    - **Branch**: main
    - **Root Directory**: Leave empty
    - **Environment**: Docker
-   - **Dockerfile Path**: `./apps/worker/Dockerfile`
-   - **Docker Build Context Directory**: `./`
+   - **Dockerfile Path**: `./Dockerfile.worker`
    - **Plan**: Free
 
 4. Add Environment Variables:
@@ -133,8 +130,7 @@ The `render.yaml` file in the root directory contains the complete infrastructur
    - **Branch**: main
    - **Root Directory**: Leave empty
    - **Environment**: Docker
-   - **Dockerfile Path**: `./apps/frontend/Dockerfile`
-   - **Docker Build Context Directory**: `./`
+   - **Dockerfile Path**: `./Dockerfile.frontend`
    - **Plan**: Free
 
 4. Add Build Arguments and Environment Variables:
@@ -171,14 +167,13 @@ All Dockerfiles must be built with the **repository root** as the build context.
 
 ### Error: "failed to compute cache key: /apps/prisma: not found"
 
-**Solution**: Ensure the Docker Build Context Directory is set to `./` (repository root), not a subdirectory.
+**Solution**: The Dockerfiles have been moved to the repository root to avoid context issues:
+- Use `Dockerfile.api` for API server
+- Use `Dockerfile.ws` for WebSocket server
+- Use `Dockerfile.worker` for Worker
+- Use `Dockerfile.frontend` for Frontend
 
-In `render.yaml`, this is:
-```yaml
-dockerContext: ./
-```
-
-In manual setup, set **Docker Build Context Directory** to `./`
+These Dockerfiles automatically use the repository root as the build context, so no additional configuration is needed.
 
 ### Database Connection Issues
 

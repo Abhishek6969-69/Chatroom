@@ -22,8 +22,7 @@ services:
     env: docker
     region: oregon
     plan: free
-    dockerfilePath: ./apps/api-server/Dockerfile
-    dockerContext: ./
+    dockerfilePath: ./Dockerfile.api
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -48,8 +47,7 @@ services:
     env: docker
     region: oregon
     plan: free
-    dockerfilePath: ./apps/ws-server/Dockerfile
-    dockerContext: ./
+    dockerfilePath: ./Dockerfile.ws
     envVars:
       - key: REDIS_URL
         fromService:
@@ -69,8 +67,7 @@ services:
     env: docker
     region: oregon
     plan: free
-    dockerfilePath: ./apps/worker/Dockerfile
-    dockerContext: ./
+    dockerfilePath: ./Dockerfile.worker
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -90,14 +87,7 @@ services:
     env: docker
     region: oregon
     plan: free
-    dockerfilePath: ./apps/frontend/Dockerfile
-    dockerContext: ./
-    buildCommand: |
-      docker build \
-        --build-arg VITE_API_URL=$VITE_API_URL \
-        --build-arg VITE_WS_URL=$VITE_WS_URL \
-        -f ./apps/frontend/Dockerfile \
-        .
+    dockerfilePath: ./Dockerfile.frontend
     envVars:
       - key: VITE_API_URL
         value: https://chatroom-api.onrender.com
